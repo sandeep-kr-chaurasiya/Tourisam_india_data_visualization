@@ -12,12 +12,14 @@ states = sorted(data['State'].unique())
 
 # Display all states for easy selection
 def display_states():
+    """Prints a numbered list of available states for selection."""
     print("\nAvailable States:")
-    for idx, state in enumerate(states, start=1):
-        print(f"{idx}. {state}")
+    for idx, state in enumerate(states, 1):  # Enumerate with starting index 1
+        print(f"{idx}. {state}")  # Print the index and state name
 
 # Function to select a state with validation
 def select_state():
+    """Prompts the user to select a state from the list."""
     display_states()
     while True:
         try:
@@ -31,6 +33,7 @@ def select_state():
 
 # Function to display the main menu
 def tourism_visualization_menu():
+    """Displays a menu of options to visualize tourism data."""
     while True:
         print("\n--- Tourism Data Visualization Menu ---")
         print("1. Total Tourists by State")
@@ -132,7 +135,7 @@ def tourist_demographics_by_state(state_name):
     plt.tight_layout()
     plt.show()
 
-# Feature 6: State Suitability Score (Suitable vs. Unsuitable)
+# Feature 6: State Suitability for Tourism (Suitable vs. Unsuitable)
 def state_suitability_score_map():
     """Displays a stacked bar chart showing suitability for tourism by state."""
     plt.figure(figsize=(12, 8))
