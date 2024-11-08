@@ -10,12 +10,14 @@ data['Date'] = pd.to_datetime(data['Month'] + ' ' + data['Year'].astype(str))
 # Get a list of unique states
 states = sorted(data['State'].unique())
 
+
 # Display all states for easy selection
 def display_states():
     """Prints a numbered list of available states for selection."""
     print("\nAvailable States:")
     for idx, state in enumerate(states, 1):
         print(f"{idx}. {state}")
+
 
 # Function to select a state with validation
 def select_state():
@@ -30,6 +32,7 @@ def select_state():
                 print("Invalid number. Please choose a valid state number.")
         except ValueError:
             print("Invalid input. Please enter a number.")
+
 
 # Function to display the main menu
 def tourism_visualization_menu():
@@ -67,23 +70,39 @@ def tourism_visualization_menu():
         else:
             print("Invalid choice. Please try again.")
 
+
 # Feature 1: Total Tourists by State
 def total_tourists_by_state():
-    """Displays a bar chart of the total number of tourists for each state."""
-    plt.figure(figsize=(14, 8))
-    state_totals = data.groupby('State')['Total_Tourists'].sum().sort_values()
-    state_totals.plot(kind='barh', color='royalblue', edgecolor='black', width=0.8)
+    """Displays a bar chart of the total number of tourists for each state by year."""
+    # Group by State and Year to get total tourists per year for each state
+    state_year_totals = data.groupby(['State', 'Year'])['Total_Tourists'].sum().unstack()
 
-    for i, v in enumerate(state_totals):
-        plt.text(v + 100000, i, f'{v:,}', va='center', fontweight='bold', color='black', fontsize=9)
+    # Plot a stacked bar chart where each year's tourists are shown separately within each state
+    state_year_totals.plot(kind='barh', stacked=True, figsize=(14, 8), colormap='Paired', edgecolor='black', width=0.8)
 
-    plt.title("Total Tourists by State", fontsize=16)
+    # Adding annotations for each year's total tourists in the bars
+    for index, state in enumerate(state_year_totals.index):
+        yearly_totals = state_year_totals.loc[state]
+        cumulative_total = 0  # To adjust text positions for stacked bars
+        for year, total in yearly_totals.items():
+            if pd.notnull(total):  # Check if the value is not NaN
+                plt.text(cumulative_total + total / 2, index, f'{int(total):,}', ha='center', va='center', fontsize=9)
+                cumulative_total += total  # Update cumulative total for stacked bar positioning
+
+    # Customizing chart aesthetics
+    plt.title("Total Tourists by State (Year-wise)", fontsize=16)
     plt.xlabel("Total Tourists", fontsize=12)
     plt.ylabel("State", fontsize=12)
     plt.xticks(fontsize=10)
     plt.yticks(fontsize=10)
+    plt.legend(title="Year", bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=10)
     plt.tight_layout(pad=3.0)
     plt.show()
+
+
+# Run the function
+total_tourists_by_state()
+
 
 # Feature 2: Monthly Tourist Trends for a State
 def monthly_tourist_trends(state_name):
@@ -105,6 +124,7 @@ def monthly_tourist_trends(state_name):
     plt.tight_layout(pad=3.0)
     plt.show()
 
+
 # Feature 3: Top 5 States by Total Tourists
 def top_5_states_by_tourists():
     """Displays a bar chart of the top 5 states with the highest total number of tourists."""
@@ -122,7 +142,6 @@ def top_5_states_by_tourists():
     plt.yticks(fontsize=10)
     plt.tight_layout(pad=3.0)
     plt.show()
-
 
 
 # Feature 4: Growth Percentage of Tourists by State (Line Chart with Annotations)
@@ -168,6 +187,7 @@ def growth_percentage_by_state():
     # Show the plot
     plt.show()
 
+
 # Feature 5: Tourist Demographics by State (Domestic vs. Foreign)
 def tourist_demographics_by_state(state_name):
     """Displays a line chart showing domestic vs. foreign tourists for the selected state."""
@@ -191,6 +211,7 @@ def tourist_demographics_by_state(state_name):
     plt.tight_layout(pad=3.0)
     plt.show()
 
+
 # Feature 6: Foreign vs. Domestic Tourist Trends by State
 def foreign_vs_domestic_trends(state_name):
     """Displays a line chart comparing foreign and domestic tourist trends."""
@@ -201,11 +222,13 @@ def foreign_vs_domestic_trends(state_name):
 
     # Add text labels for Domestic Tourists
     for i, v in enumerate(state_data['Domestic_Tourists']):
-        plt.text(state_data['Date'].iloc[i], v + 50000, f'{v:,}', ha='center', va='bottom', fontsize=9, color='black', rotation=90)
+        plt.text(state_data['Date'].iloc[i], v + 50000, f'{v:,}', ha='center', va='bottom', fontsize=9, color='black',
+                 rotation=90)
 
     # Add text labels for Foreign Tourists
     for i, v in enumerate(state_data['Foreign_Tourists']):
-        plt.text(state_data['Date'].iloc[i], v + 50000, f'{v:,}', ha='center', va='bottom', fontsize=9, color='black', rotation=45)
+        plt.text(state_data['Date'].iloc[i], v + 50000, f'{v:,}', ha='center', va='bottom', fontsize=9, color='black',
+                 rotation=45)
 
     plt.title(f"Foreign vs. Domestic Tourist Trends in {state_name}", fontsize=16)
     plt.xlabel("Date", fontsize=12)
@@ -216,6 +239,7 @@ def foreign_vs_domestic_trends(state_name):
     plt.grid(True)
     plt.tight_layout(pad=3.0)
     plt.show()
+
 
 # Call the main menu function to start the program
 tourism_visualization_menu()
