@@ -124,7 +124,8 @@ def top_5_states_by_tourists():
     plt.show()
 
 
-# Feature 4: Growth Percentage of Tourists by State (Line Chart)
+
+# Feature 4: Growth Percentage of Tourists by State (Line Chart with Annotations)
 def growth_percentage_by_state():
     """Displays a line chart of the growth percentage in tourist numbers for each state by year."""
 
@@ -144,6 +145,11 @@ def growth_percentage_by_state():
     for state in state_yearly_data['State'].unique():
         state_data = state_yearly_data[state_yearly_data['State'] == state]
         plt.plot(state_data['Year'], state_data['Growth_Percentage'], marker='o', label=state, linewidth=2)
+
+        # Annotate each year with the growth percentage
+        for i, row in state_data.iterrows():
+            plt.text(row['Year'], row['Growth_Percentage'] + 0.5, f'{row["Growth_Percentage"]:.2f}%',
+                     ha='center', fontsize=6, color='black', fontweight='bold')
 
     # Customize the plot
     plt.title("Growth Percentage of Tourists by State (Year-over-Year)", fontsize=16, fontweight='bold')
